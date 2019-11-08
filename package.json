@@ -1,0 +1,19 @@
+{
+  "name": "webshop-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@firebase/firestore-types": "^1.6.2",
+    "@types/firebase": "^3.2.1",
+    "@types/node": "^12.12.5",
+    "dotenv": "^8.2.0",
+    "firebase": "^7.2.3",
+    "typescript": "^3.6.4"
+  }
+}
