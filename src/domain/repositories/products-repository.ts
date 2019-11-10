@@ -36,6 +36,27 @@ export class ProductsRepository {
         }
     }
 
+    public updateProduct(product: Product, data: any): void {
+        try {
+            this.databaseClient.database.collection('product').where('slug', '==', product.slug)
+            .get()
+            .then((snapShot) => {
+                snapShot.forEach((doc) => {
+                    this.databaseClient.database.collection('product').doc(doc.id).set({
+                        name: data.name,
+                        slug: product.slug,
+                        createdBy: product.createdBy,
+                        dateAdded: product.dateAdded,
+                        quantity: product.quantity
+                    })
+                })                
+            })
+        }
+        catch(e) {
+            throw new Error(e.message)
+        }
+    }
+
     private getSpecificProduct(productName: string): any {
         try {
             return this.databaseClient.database.collection('product').where('name', '==', productName)
@@ -59,8 +80,8 @@ export class ProductsRepository {
     }
 }
 
-let productRepo = new ProductsRepository()
-productRepo.getProducts().then(console.log)
+// let productRepo = new ProductsRepository()
 // let user = new User('bobi', 'rokanov', 'bobirok', 20, Date.now(), [])
-// let product = new Product('test', 12, Date.now(), {...user})
-//productRepo.createProduct({...product})
+// let product = new Product('random t-shirt', 12, Date.now(), {...user})
+// productRepo.updateProduct(product, {name: 't-www', quantity: 100})
+// //productRepo.createProduct({...product})
