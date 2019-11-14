@@ -10,10 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "@firebase/firestore-types": "^1.6.2",
+    "@types/bcrypt": "^3.0.0",
     "@types/firebase": "^3.2.1",
+    "@types/jsonwebtoken": "^8.3.5",
     "@types/node": "^12.12.5",
+    "bcrypt": "^3.0.6",
     "dotenv": "^8.2.0",
     "firebase": "^7.2.3",
+    "jsonwebtoken": "^8.5.1",
     "typescript": "^3.6.4"
   }
 }
