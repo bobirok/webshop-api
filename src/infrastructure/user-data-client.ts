@@ -22,15 +22,16 @@ export class UserDataClient {
 
   public database = this.app.firestore()
 
-  public async registerUser(user: User, password: string): Promise<void> {
+  public async registerUser(user: User, password: string): Promise<string> {
     try {
-      this.database.collection('user').where('username', '==', user.username).get()
-        .then((snapShot) => {
-          this.processRegistration(snapShot, password)
-        })
+      let snapShot = await this.database.collection('user').where('username', '==', user.username).get()
+
+      let token = await this.processRegistration(snapShot, user, password)
+
+      return Promise.resolve(token)
     }
     catch (e) {
-      Promise.reject(e)
+      return Promise.reject(e)
     }
   }
 
@@ -39,7 +40,7 @@ export class UserDataClient {
       return new Promise((resolve, reject) => {
         this.getUser(username).then(snapShot => {
           this.processLogin(snapShot, password)
-          resolve(snapShot.docs[0].data())
+          resolve(snapShot.docs[0].data().token)
         })
       })
     }
@@ -82,12 +83,16 @@ export class UserDataClient {
     })
   }
 
-  private insertToken(accountExists: boolean, doc: firebase.firestore.QueryDocumentSnapshot): void {
+  private insertToken(accountExists: boolean, doc: firebase.firestore.QueryDocumentSnapshot): Promise<string> {
     if (accountExists) {
+
       const token = this.generateJwtToken(doc.data().id)
       doc.ref.update({ token })
-    } else {
-      throw new Error('No registration with these credentials')
+
+      return Promise.resolve(token)
+    } 
+    else {
+      return Promise.reject(new Error('No registration with these credentials'))
     }
   }
 
@@ -95,33 +100,33 @@ export class UserDataClient {
     return jwt.sign({ id }, process.env.JWT_SECRET_KEY!)
   }
 
-  private processRegistration(snapShot: firebase.firestore.QuerySnapshot, password: string): void {
+  private async processRegistration(snapShot: firebase.firestore.QuerySnapshot, user: User, password: string): Promise<string> {
     if (snapShot.size === 0) {
-      this.saltPassword(password).then(salted_password => {
-        this.database.collection('user').add({ ...user, password: salted_password })
-        this.getUser(user.username)
-          .then((snapShot: firebase.firestore.QuerySnapshot) => {
-            this.assignTokenToUser(snapShot)
-          })
-      })
-    } else {
-      Promise.reject()
+
+      let salted_password = await this.saltPassword(password);
+      await this.database.collection('user').add({ ...user, password: salted_password })
+      let user_snapshot = await this.getUser(user.username)
+      let token = await this.assignTokenToUser(user_snapshot)
+
+      return Promise.resolve(token)
+    } 
+    else {
+      return Promise.reject()
     }
   }
 
-  private assignTokenToUser(snapShot: firebase.firestore.QuerySnapshot): void {
+  private async assignTokenToUser(snapShot: firebase.firestore.QuerySnapshot): Promise<string> {
     try {
-      snapShot.forEach((doc) => {
-        this.insertToken(true, doc);
+      return new Promise((resolve, reject) => {
+        let token: string = '';
+        snapShot.forEach(async (doc) => {
+          token = await this.insertToken(true, doc);
+        })
+        resolve(token)
       })
     }
     catch (e) {
-      throw new Error(e)
+      return Promise.reject(e)
     }
   }
 }
-
-let user = new User('qqqqwww', 'w', 'boobirorrrk', 20, 201911102130, [])
-let ud = new UserDataClient()
-//ud.registerUser(user, 'bobibob2o').then()
-ud.loginUser('boobirorrrk', 'bobibob2o').then(console.log).catch(console.log)
