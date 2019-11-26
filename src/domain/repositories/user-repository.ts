@@ -12,4 +12,13 @@ export class UserRepository {
             return Promise.reject(e)
         }
     }
+
+    public async loginUser(username: string, password: string): Promise<string> {
+        try {
+            return await this.userClient.loginUser(username, password);
+        }
+        catch(e) {
+            return Promise.reject(e);
+        }
+    }
 }
