@@ -30,11 +30,24 @@ router.get('/login', async (req: any, res: any) => {
 
     try {
         let token = await userRepository.loginUser(username, password);
-        console.log('Token : ' + token)
+
         return res.status(200).send(token);
     }
     catch(e) {
         return res.status(400).send(e)
+    }
+})
+
+router.get('/logout', async (req: any, res:any) => {
+    let token = req.query.token;
+
+    try {
+        await userRepository.logOutUser(token);
+
+        return res.status(200).send('LogedOut');
+    }
+    catch(e) {
+        return res.status(400).send(e);
     }
 })
 

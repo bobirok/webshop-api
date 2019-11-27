@@ -21,4 +21,13 @@ export class UserRepository {
             return Promise.reject(e);
         }
     }
+
+    public async logOutUser(token: string): Promise<void> {
+        try {
+            await this.userClient.logOut(token);
+        }
+        catch(e) {
+            Promise.reject(e)
+        }
+    }
 }

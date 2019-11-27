@@ -23,22 +23,29 @@ export class UserDataClient {
     }
   }
 
-  public loginUser(username: string, password: string): Promise<string> {
+  public async loginUser(username: string, password: string): Promise<string> {
     try {
-      return new Promise(async (resolve, reject) => {
-        let userSnapshot = await this.getUser(username);
-        this.processLogin(userSnapshot, password)
-        .then((token) => {
-          console.log('kurec' + token)
-          resolve(token)
-        })
-        .catch((e) => {
-          reject(e)
-        })
-      })
+      let userSnapshot = await this.getUser(username);
+
+      let token = await this.processLogin(userSnapshot, password);
+
+      return token;
     }
     catch (e) {
       return Promise.reject(e)
+    }
+  }
+
+  public async logOut(token: string): Promise<void> {
+    try {
+      let userDocument: firebase.firestore.DocumentSnapshot = await this.getUserByToken(token);
+
+      this.removeTokenFromUser(userDocument);
+
+      Promise.resolve();
+    }
+    catch(e) {
+      Promise.reject(e);
     }
   }
 
@@ -56,14 +63,25 @@ export class UserDataClient {
     }
   }
 
+  private async getUserByToken(token: string): Promise<firebase.firestore.DocumentSnapshot> {
+    try {
+        let snapShot: firebase.firestore.QuerySnapshot = await this.database.collection('user').where('token', '==', token).get();
+
+        return snapShot.docs[0];
+    }
+    catch(e) {
+      return Promise.reject(e);
+    }
+  }
+
   private async processLogin(snapShot: firebase.firestore.QuerySnapshot, password: string): Promise<string> {
     try {
       if (snapShot.size === 0) {
-        return Promise.reject(new Error('No registration with these credentials!'))
+        throw new Error('No registration with these credentials!')
       } else {
         return new Promise((resolve, reject) => {
           bcrypt.compare(password, snapShot.docs[0].data().password, async (err: Error, res: boolean) => {
-            if (!res) { return Promise.reject('The credentials are invalid!') }
+            if (!res) { reject('The credentials are invalid!') }
             let token = await this.insertToken(res, snapShot.docs[0]);
             resolve(token)
           })
@@ -71,7 +89,7 @@ export class UserDataClient {
       }
     }
     catch (e) {
-      return Promise.reject()
+      return Promise.reject(e)
     }
   }
 
@@ -121,6 +139,15 @@ export class UserDataClient {
     }
     else {
       return Promise.reject(new Error('No registration with these credentials'))
+    }
+  }
+
+  private async removeTokenFromUser(doc: firebase.firestore.DocumentSnapshot): Promise<void> {
+    try {
+      await doc.ref.update({token: ''})
+    }
+    catch(e) {
+      Promise.reject(e)
     }
   }
 }
