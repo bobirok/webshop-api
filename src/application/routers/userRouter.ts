@@ -24,7 +24,7 @@ router.get('/register', async (req: any, res: any) => {
     }
 })
 
-router.get('/login', async (req: any, res: any) => {
+router.post('/login', async (req: any, res: any) => {
     let username: string = req.query.username;
     let password: string = req.query.password;
 
@@ -38,13 +38,24 @@ router.get('/login', async (req: any, res: any) => {
     }
 })
 
-router.get('/logout', async (req: any, res:any) => {
+router.post('/logout', async (req: any, res:any) => {
     let token = req.query.token;
 
     try {
         await userRepository.logOutUser(token);
 
         return res.status(200).send('LogedOut');
+    }
+    catch(e) {
+        return res.status(400).send(e);
+    }
+})
+
+router.get('/me', async (req: any, res: any) => {
+    try {
+        let user = await userRepository.getUser(req.query.username);
+
+        return res.status(200).send(user);
     }
     catch(e) {
         return res.status(400).send(e);

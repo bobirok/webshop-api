@@ -49,7 +49,7 @@ export class UserDataClient {
     }
   }
 
-  private getUser(username: string): Promise<any> {
+  public getUser(username: string): Promise<any> {
     try {
       return new Promise((resolve, reject) => {
         this.database.collection('user').where('username', '==', username).get()
