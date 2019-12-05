@@ -35,7 +35,6 @@ export class UserRepository {
     public async getUser(username: string): Promise<User> {
         try {
             let userSnapshot = await this.userClient.getUser(username);
-
             return this.buildUserProfile(userSnapshot);
         }
         catch(e) {
@@ -49,7 +48,8 @@ export class UserRepository {
         let firstName: string = data.firstName;
         let lastName: string = data.lastName;
         let age: number = data.age;
+        let dateCreated: number = data.profileCreatedAt;
 
-        return new User(firstName, lastName, username, age, Date.now())
+        return new User(firstName, lastName, username, age, dateCreated)
     }
 }

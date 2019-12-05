@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors'
 import bodyParser from 'body-parser';
-const userRouter = require('./routers/userRouter')
-const productRouter = require('./routers/productRouter')
+const userRouter = require('./routers/user-router')
+const productRouter = require('./routers/product-router')
 
 const app = express();
 const port = 3000;

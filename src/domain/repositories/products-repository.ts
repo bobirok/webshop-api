@@ -12,4 +12,13 @@ export class ProductsRepository {
             return Promise.reject(e)
         }
     }
+
+    public async getProduct(id: string): Promise<Product> {
+        try {
+            return await this.databaseClient.getProduct(id);
+        }
+        catch(e) {
+            return Promise.reject(e);
+        }
+    }
 }

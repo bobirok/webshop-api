@@ -26,9 +26,24 @@ export class ProductDataClient {
           })
   }
 
+  public async getProduct(id: string): Promise<any> {
+      return new Promise((resolve, reject) => {
+        this.database.collection('product').doc(id).get()
+        .then((doc: any) => {
+            let product = doc.data();
+
+            if(!product) {
+                reject();
+            }
+            
+            resolve(product)
+        })
+      })
+  }
+
   public deleteProduct(product: Product): void {
       try {
-          let foundProduct = this.getSpecificProduct(product.name);
+          let foundProduct = this.getProductForDeletion(product.name);
 
           this.removeFromStorage(foundProduct)
       }
@@ -58,7 +73,7 @@ export class ProductDataClient {
       }
   }
 
-  private getSpecificProduct(productName: string): any {
+  private getProductForDeletion(productName: string): any {
       try {
           return this.database.collection('product').where('name', '==', productName)
       }
