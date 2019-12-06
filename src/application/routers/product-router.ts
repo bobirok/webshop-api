@@ -14,4 +14,8 @@ router.get('/products/:id', auth.authenticate, async (req, res) => {
     return await productHandler.getProduct(req, res).catch(console.log);
 })
 
+router.post('/products/delete/:id', auth.authenticateAdministrator, async (req, res) => {
+    return await productHandler.deleteProduct(req, res);
+})
+
 module.exports = router

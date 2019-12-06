@@ -33,7 +33,7 @@ export class ProductDataClient {
             let product = doc.data();
 
             if(!product) {
-                reject();
+                reject('Product does not exist!');
             }
             
             resolve(product)
@@ -41,9 +41,9 @@ export class ProductDataClient {
       })
   }
 
-  public deleteProduct(product: Product): void {
+  public async deleteProduct(productId: string): Promise<void> {
       try {
-          let foundProduct = this.getProductForDeletion(product.name);
+          let foundProduct = await this.getProductForDeletion(productId);
 
           this.removeFromStorage(foundProduct)
       }
@@ -73,22 +73,24 @@ export class ProductDataClient {
       }
   }
 
-  private getProductForDeletion(productName: string): any {
+  private getProductForDeletion(productId: string): Promise<any> {
       try {
-          return this.database.collection('product').where('name', '==', productName)
+          return new Promise((resolve, reject) => {
+            let productDoc = this.database.collection('product').doc(productId).get();
+            
+            if(!productDoc) { reject('Could not be found!' )}
+
+            resolve(productDoc);
+          })
       }
       catch (e) {
           return Promise.reject(e)
       }
   }
 
-  private removeFromStorage(foundProduct: any): void {
+  private async removeFromStorage(foundProduct: firebase.firestore.QueryDocumentSnapshot): Promise<void> {
       try {
-          foundProduct.get().then((querySnapshot: any) => {
-              querySnapshot.forEach((doc: any) => {
-                  doc.ref.delete();
-              });
-          });
+          await foundProduct.ref.delete();
       }
       catch (e) {
           throw new Error(e.message)

@@ -2,11 +2,11 @@ import { ProductDataClient } from "../../infrastructure/product-data-client";
 import { Product } from "../product";
 
 export class ProductsRepository {
-    private databaseClient = new ProductDataClient()
+    private productDataClient = new ProductDataClient()
 
     public async getProducts(): Promise<Product[]> {
         try {
-            return await this.databaseClient.getProducts();
+            return await this.productDataClient.getProducts();
         } 
         catch(e) {
             return Promise.reject(e)
@@ -15,10 +15,19 @@ export class ProductsRepository {
 
     public async getProduct(id: string): Promise<Product> {
         try {
-            return await this.databaseClient.getProduct(id);
+            return await this.productDataClient.getProduct(id);
         }
         catch(e) {
             return Promise.reject(e);
+        }
+    }
+
+    public async deleteProduct(id: string): Promise<void> {
+        try {
+            await this.productDataClient.deleteProduct(id);
+        }
+        catch(e) {
+            Promise.reject(e);
         }
     }
 }

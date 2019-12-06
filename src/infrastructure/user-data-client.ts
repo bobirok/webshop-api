@@ -16,7 +16,7 @@ export class UserDataClient {
 
       let token = await this.processRegistration(snapShot, user, password)
 
-      return Promise.resolve(token)
+      return token
     }
     catch (e) {
       return Promise.reject(e)
@@ -85,7 +85,7 @@ export class UserDataClient {
         bcrypt.compare(password, snapShot.docs[0].data().password, async (err: Error, res: boolean) => {
           if (!res) { reject('The credentials are invalid!') }
           let token = await this.insertToken(res, snapShot.docs[0]);
-          resolve(token)
+          resolve(token);
         })
       })
 
@@ -98,7 +98,7 @@ export class UserDataClient {
   private saltPassword(password: string): Promise<string> {
     return new Promise((resolve, reject) => {
       bcrypt.hash(password, 8, function (err: any, hash: string) {
-        resolve(hash)
+        resolve(hash);
       });
     })
   }
@@ -107,15 +107,15 @@ export class UserDataClient {
     try {
       
       if(snapShot.size !== 0) {
-        throw new Error('Account with this username exists!')
+        throw new Error('Account with this username exists!');
       }
 
       let salted_password = await this.saltPassword(password);
-      await this.database.collection('user').add({ ...user, password: salted_password })
-      let user_snapshot = await this.getUser(user.username)
-      let token = await this.assignTokenToUser(user_snapshot)
+      await this.database.collection('user').add({ ...user, password: salted_password, isAdmin: false });
+      let user_snapshot = await this.getUser(user.username);
+      let token = await this.assignTokenToUser(user_snapshot);
 
-      return Promise.resolve(token)
+      return token;
 
     }
     catch(e) {
@@ -132,34 +132,34 @@ export class UserDataClient {
     }
   }
 
-  private insertToken(accountExists: boolean, doc: firebase.firestore.QueryDocumentSnapshot): Promise<string> {
+  private async insertToken(accountExists: boolean, doc: firebase.firestore.QueryDocumentSnapshot): Promise<string> {
     try {
 
       if (!accountExists) {
-        throw new Error('No registration with these credentials')
+        throw new Error('No registration with these credentials');
       }
 
-      const token = this.generateJwtToken(doc.data().username)
-      doc.ref.update({ token })
+      const token = this.generateJwtToken(doc.data());
+      await doc.ref.update({ token });
 
-      return Promise.resolve(token)
+      return token;
 
     }
     catch (e) {
-      return Promise.reject(e)
+      return Promise.reject(e);
     }
   }
 
   private async removeTokenFromUser(doc: firebase.firestore.DocumentSnapshot): Promise<void> {
     try {
-      await doc.ref.update({ token: '' })
+      await doc.ref.update({ token: '' });
     }
     catch (e) {
-      Promise.reject(e)
+      Promise.reject(e);
     }
   }
 
-  private generateJwtToken(username: string): string {
-    return jwt.sign({ username }, process.env.JWT_SECRET_KEY!)
+  private generateJwtToken(user: firebase.firestore.DocumentData): string {
+    return jwt.sign({ username: user.username, isAdmin: user.isAdmin }, process.env.JWT_SECRET_KEY!);
   }
 }
