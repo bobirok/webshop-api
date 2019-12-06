@@ -5,11 +5,12 @@ export class Product {
 
     constructor(
         public readonly name: string,
+        public readonly price: number,
+        public readonly image: string,
         public readonly quantity: number,
         public readonly dateAdded: number,
-        public readonly createdBy: User
     )
     {
-        this.slug = createdBy.username + '-' + name.replace(' ', '-')
+        this.slug = name.replace(' ', '-')
     }
 }

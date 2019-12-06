@@ -61,7 +61,6 @@ export class ProductDataClient {
                   this.database.collection('product').doc(doc.id).set({
                       name: data.name,
                       slug: product.slug,
-                      createdBy: product.createdBy,
                       dateAdded: product.dateAdded,
                       quantity: product.quantity
                   })

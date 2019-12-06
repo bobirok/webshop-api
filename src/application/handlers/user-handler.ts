@@ -1,5 +1,6 @@
 import { User } from "../../domain/user";
 import { UserRepository } from "../../domain/repositories/user-repository";
+import { Cart } from "../../domain/cart";
 
 export class UserHandler {
     private userRepository = new UserRepository();
@@ -11,9 +12,10 @@ export class UserHandler {
         let age = req.query.age;
         let createdAt = Date.now();
         let password = req.query.password;
+        let cart: Cart = new Cart();
 
-        let user = new User(firstName, lastName, username, parseInt(age), createdAt);
-
+        let user = new User(firstName, lastName, username, parseInt(age), createdAt, false, cart);
+        console.log(user)
         try {
             let token = await this.userRepository.registerUser(user, password);
             return res.status(200).send(token);
@@ -47,6 +49,20 @@ export class UserHandler {
         }
         catch (e) {
             return res.status(400).send(e);
+        }
+    }
+
+    public async addProductToUserCart(req: any, res: any): Promise<any> {
+        let productId = req.query.productId;
+        let username = req.username;
+    
+        try {
+            await this.userRepository.addToUserCart(username, productId);
+
+            return res.status(200).send('Added!');
+        }
+        catch(e) {
+            return res.status(400).send('Could not be added!');
         }
     }
 

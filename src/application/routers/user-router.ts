@@ -23,4 +23,8 @@ router.get('/me', auth.authenticate ,async (req: any, res: any) => {
     return await userHandler.getProfile(req, res);
 })
 
+router.post('/add', auth.authenticate, async (req: any, res: any) => {
+    return await userHandler.addProductToUserCart(req, res);
+})
+
 module.exports = router

@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import { User } from '../domain/user';
 import * as jwt from 'jsonwebtoken';
+import { Product } from '../domain/product';
 
 const bcrypt = require('bcrypt');
 
@@ -49,7 +50,21 @@ export class UserDataClient {
     }
   }
 
-  public getUser(username: string): Promise<any> {
+  public async addProductToCart(username: string, product: any): Promise<void> {
+    try {
+      let userSnapshot = await this.getUser(username);
+      let cart = userSnapshot.docs[0].data().cart;
+      cart.push({...product})
+      let docId = userSnapshot.docs[0].id;
+
+      await this.database.collection('user').doc(docId).set({cart}, { merge: true})
+    }
+    catch(e) {
+      Promise.reject(e);
+    }
+  }
+
+  public getUser(username: string): Promise<firebase.firestore.QuerySnapshot> {
     try {
       return new Promise((resolve, reject) => {
         this.database.collection('user').where('username', '==', username).get()
@@ -111,7 +126,7 @@ export class UserDataClient {
       }
 
       let salted_password = await this.saltPassword(password);
-      await this.database.collection('user').add({ ...user, password: salted_password, isAdmin: false });
+      await this.database.collection('user').add({ ...user, password: salted_password, cart: [...user.cart.products] });
       let user_snapshot = await this.getUser(user.username);
       let token = await this.assignTokenToUser(user_snapshot);
 
@@ -119,6 +134,7 @@ export class UserDataClient {
 
     }
     catch(e) {
+      console.log(e)
       return Promise.reject(e);
     }
   }

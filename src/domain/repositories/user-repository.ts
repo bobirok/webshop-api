@@ -1,9 +1,13 @@
 import { UserDataClient } from "../../infrastructure/user-data-client";
 import { User } from "../user";
 import { firestore } from "firebase";
+import { Product } from "../product";
+import { ProductDataClient } from "../../infrastructure/product-data-client";
+import { Cart } from "../cart";
 
 export class UserRepository {
     private userClient = new UserDataClient();
+    private productClient = new ProductDataClient();
 
     public async registerUser(user: User, password: string): Promise<string> {
         try {
@@ -32,6 +36,17 @@ export class UserRepository {
         }
     }
 
+    public async addToUserCart(username: string, productId: string): Promise<void> {
+        try {
+            let product: Product = await this.productClient.getProduct(productId);
+
+            await this.userClient.addProductToCart(username, product);
+        }
+        catch(e) {
+            Promise.reject(e);
+        }
+    }
+
     public async getUser(username: string): Promise<User> {
         try {
             let userSnapshot = await this.userClient.getUser(username);
@@ -49,7 +64,9 @@ export class UserRepository {
         let lastName: string = data.lastName;
         let age: number = data.age;
         let dateCreated: number = data.profileCreatedAt;
+        let isAdmin: boolean = data.isAdmin;
+        let cart: Cart = data.cart;
 
-        return new User(firstName, lastName, username, age, dateCreated)
+        return new User(firstName, lastName, username, age, dateCreated, isAdmin, cart)
     }
 }
