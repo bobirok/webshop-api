@@ -52,20 +52,6 @@ export class UserHandler {
         }
     }
 
-    public async addProductToUserCart(req: any, res: any): Promise<any> {
-        let productId = req.query.productId;
-        let username = req.username;
-    
-        try {
-            await this.userRepository.addToUserCart(username, productId);
-
-            return res.status(200).send('Added!');
-        }
-        catch(e) {
-            return res.status(400).send('Could not be added!');
-        }
-    }
-
     public async getProfile(req: any, res: any): Promise<any> {
         let username: string = req.username;
 

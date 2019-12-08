@@ -36,20 +36,10 @@ export class UserRepository {
         }
     }
 
-    public async addToUserCart(username: string, productId: string): Promise<void> {
-        try {
-            let product: Product = await this.productClient.getProduct(productId);
-
-            await this.userClient.addProductToCart(username, product);
-        }
-        catch(e) {
-            Promise.reject(e);
-        }
-    }
-
     public async getUser(username: string): Promise<User> {
         try {
             let userSnapshot = await this.userClient.getUser(username);
+
             return this.buildUserProfile(userSnapshot);
         }
         catch(e) {

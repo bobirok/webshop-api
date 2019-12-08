@@ -4,6 +4,15 @@ import { Product } from "../product";
 export class ProductsRepository {
     private productDataClient = new ProductDataClient()
 
+    public async createProduct(product: Product): Promise<void> {
+        try {
+            await this.productDataClient.createProduct(product);
+        }
+        catch(e) {
+            Promise.reject(e);
+        }
+    }
+
     public async getProducts(): Promise<Product[]> {
         try {
             return await this.productDataClient.getProducts();

@@ -1,11 +1,33 @@
 import { ProductsRepository } from "../../domain/repositories/products-repository";
+import { Product } from "../../domain/product";
+import * as uuid from 'uuid';
 
 export class ProductHandler {
     private productRepository = new ProductsRepository();
 
+    public async createProduct(req: any, res: any): Promise<any> {
+        let id = uuid.v4();
+        let name = req.query.name;
+        let price = req.query.price;
+        let image = req.query.image;
+        let quantity = req.query.quantity;
+        let date = Date.now();
+
+        try {
+            let product = new Product(id, name, price, image, quantity, date);
+
+            await this.productRepository.createProduct(product);
+
+            return res.status(200).send('Added successfully!')
+        }
+        catch(e) {
+            return res.status(400).send('Something went wrong!')
+        }
+    }
+
     public async getAllProducts(req: any, res: any): Promise<any> {
         try {
-            let products = await this.productRepository.getProducts();
+            let products: Product[] = await this.productRepository.getProducts();
             
             return res.status(200).send(products);
         }

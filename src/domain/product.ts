@@ -4,6 +4,7 @@ export class Product {
     public readonly slug: string;
 
     constructor(
+        public readonly id: string,
         public readonly name: string,
         public readonly price: number,
         public readonly image: string,

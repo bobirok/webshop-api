@@ -50,20 +50,6 @@ export class UserDataClient {
     }
   }
 
-  public async addProductToCart(username: string, product: any): Promise<void> {
-    try {
-      let userSnapshot = await this.getUser(username);
-      let cart = userSnapshot.docs[0].data().cart;
-      cart.push({...product})
-      let docId = userSnapshot.docs[0].id;
-
-      await this.database.collection('user').doc(docId).set({cart}, { merge: true})
-    }
-    catch(e) {
-      Promise.reject(e);
-    }
-  }
-
   public getUser(username: string): Promise<firebase.firestore.QuerySnapshot> {
     try {
       return new Promise((resolve, reject) => {

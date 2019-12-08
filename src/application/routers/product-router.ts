@@ -6,6 +6,10 @@ const auth = Authentication;
 const router = express.Router();
 const productHandler = new ProductHandler();
 
+router.post('/products', async (req, res) => {
+    return await productHandler.createProduct(req, res);
+})
+
 router.get('/products', auth.authenticate , async (req, res) => {
     return await productHandler.getAllProducts(req, res);
 })

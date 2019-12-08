@@ -5,9 +5,9 @@ export class Authentication {
 
     public static async authenticate(request: any, response: any, next: any) {
         try {
-            let token: string = request.header('Authorization')!.replace('Bearer ', '')
+            let token: string = request.header('Authorization').replace('Bearer ', '')
             const decode: any = jwt.verify(token, process.env.JWT_SECRET_KEY!)
-
+            
             if(!decode.username) {
                 throw new Error();
             }
