@@ -4,7 +4,7 @@ import { Cart } from "../../domain/cart";
 export class CartHandler {
     private cartRepository = new CartRepository()
     
-    public async getCartProducts(req: any, res: any): Promise<any> {
+    public async getCartProductsHandler(req: any, res: any): Promise<any> {
         let username = req.username;
         
         try {
@@ -17,7 +17,7 @@ export class CartHandler {
         }
     }
 
-    public async addProductToUserCart(req: any, res: any): Promise<any> {
+    public async addProductToUserCartHandler(req: any, res: any): Promise<any> {
         let username = req.username;
         let productId = req.params.productid;
 
@@ -28,6 +28,20 @@ export class CartHandler {
         }
         catch(e) {
             return res.status(400).send('Product can not be added!');
+        }
+    }
+
+    public async removeProductFromCartHandler(req: any, res: any): Promise<any> {
+        let username: string = req.username;
+        let productid: string = req.params.productid;
+
+        try {
+            await this.cartRepository.removeProductFromCart(username, productid);
+            
+            return res.status(200).send('Item has been removed!');
+        }
+        catch(e) {
+            return res.status(400).send(e)
         }
     }
 }

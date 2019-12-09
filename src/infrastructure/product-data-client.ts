@@ -28,7 +28,6 @@ export class ProductDataClient {
     }
 
     public async getProduct(id: string): Promise<any> {
-        console.log(id)
         return new Promise((resolve, reject) => {
             this.database.collection('product').where('id', '==', id)
                 .get()

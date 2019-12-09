@@ -31,4 +31,13 @@ export class CartRepository {
             Promise.reject(e);
         }
     }
+
+    public async removeProductFromCart(username: string, productId: string): Promise<void> {
+        try {
+            await this.cartClient.removeProductFromCart(username, productId);
+        }
+        catch(e) {
+            Promise.reject(e);
+        }
+    }
 }
