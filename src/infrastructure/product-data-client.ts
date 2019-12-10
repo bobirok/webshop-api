@@ -17,14 +17,15 @@ export class ProductDataClient {
 
     public async getProducts(): Promise<any[]> {
         let arr: any[] = [];
+
         return await this.database.collection('product').get()
             .then((snapshot: firebase.firestore.QuerySnapshot) => {
                 snapshot.forEach((doc) => {
                     arr.push(doc.data())
                 })
                 
-                return arr;
-            })
+            return arr;
+        })
     }
 
     public async getProduct(id: string): Promise<any> {
@@ -47,7 +48,7 @@ export class ProductDataClient {
         try {
             let foundProduct = await this.getProductForDeletion(productId);
 
-            this.removeFromStorage(foundProduct)
+            await this.removeFromStorage(foundProduct)
         }
         catch (e) {
             throw new Error(e.message);
@@ -78,10 +79,10 @@ export class ProductDataClient {
         try {
             return new Promise((resolve, reject) => {
                 this.database.collection('product').where('id', '==', productId)
-                    .get()
-                    .then((snapShot: firebase.firestore.QuerySnapshot) => {
-                        resolve(snapShot.docs[0])
-                    })
+                .get()
+                .then((snapShot: firebase.firestore.QuerySnapshot) => {
+                    resolve(snapShot.docs[0])
+                })
             })
         }
         catch (e) {
@@ -90,11 +91,6 @@ export class ProductDataClient {
     }
 
     private async removeFromStorage(foundProduct: firebase.firestore.QueryDocumentSnapshot): Promise<void> {
-        try {
-            await foundProduct.ref.delete();
-        }
-        catch (e) {
-            throw new Error(e.message)
-        }
+        await foundProduct.ref.delete();
     }
 }

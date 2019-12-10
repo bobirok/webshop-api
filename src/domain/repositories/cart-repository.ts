@@ -12,7 +12,9 @@ export class CartRepository {
     public async getCartProducts(username: string): Promise<Cart> {
         try {
             let userSnapshot = await this.userClient.getUser(username);
-            let cart = userSnapshot.docs[0].data().cart;
+            let products: Product[] = userSnapshot.docs[0].data().cart;
+            
+            let cart = new Cart(products);
 
             return cart;
         }

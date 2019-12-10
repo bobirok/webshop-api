@@ -9,8 +9,10 @@ export class CartHandler {
         
         try {
             let cart: Cart = await this.cartRepository.getCartProducts(username)
-
-            return res.status(200).send(cart);
+            return res.status(200).send({
+                products: cart.products,
+                total: cart.total
+            });
         }
         catch(e) {
             return res.send(e);

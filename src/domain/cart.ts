@@ -1,22 +1,25 @@
 import { Product } from "./product";
 
 export class Cart {
-    public readonly total: number = 0;
+    private _total: number = 0;
 
     constructor(
-        public readonly products: Product[] = []
+        public readonly products: Product[] = [],
     ) 
-    {
-        this.total = this.calculateTotalPrice();
+    {}
+
+    get total(): number {
+        this._total = this.calculateTotalPrice();
+
+        return this._total;
     }
 
     private calculateTotalPrice(): number {
-        let total = 0;
+        let total: number = 0;
 
-        this.products.forEach(p => {
-            total += p.price;
+        this.products.forEach((p: Product) => {
+            total += +p.price;
         })
-
         return total;
     }
 }

@@ -30,7 +30,7 @@ export class CartClient {
         return userSnapshot.docs[0].data().cart;
     }
 
-    protected async setCart(username: string, cart: any): Promise<void> {
+    private async setCart(username: string, cart: any): Promise<void> {
         let userSnapshot = await this.userClient.getUser(username);
         let docId = userSnapshot.docs[0].id;
 
