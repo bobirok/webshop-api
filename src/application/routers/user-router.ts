@@ -15,7 +15,7 @@ router.post('/login', async (req: any, res: any) => {
     return await userHandler.logIn(req, res);
 })
 
-router.post('/logout', async (req: any, res: any) => {
+router.post('/logout', auth.authenticate, async (req: any, res: any) => {
     return await userHandler.logOut(req, res);
 })
 

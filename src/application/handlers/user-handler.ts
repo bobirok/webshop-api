@@ -40,10 +40,10 @@ export class UserHandler {
     }
 
     public async logOut(req: any, res: any): Promise<any> {
-        let token = req.query.token;
+        let username = req.username;
 
         try {
-            await this.userRepository.logOutUser(token);
+            await this.userRepository.logOutUser(username);
 
             return res.status(200).send('Loged Out');
         }

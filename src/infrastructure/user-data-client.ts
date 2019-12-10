@@ -37,9 +37,9 @@ export class UserDataClient {
     }
   }
 
-  public async logOut(token: string): Promise<void> {
+  public async logOut(username: string): Promise<void> {
     try {
-      let userDocument: firebase.firestore.DocumentSnapshot = await this.getUserByToken(token);
+      let userDocument: firebase.firestore.QuerySnapshot = await this.getUser(username);
 
       this.removeTokenFromUser(userDocument);
 
@@ -152,9 +152,9 @@ export class UserDataClient {
     }
   }
 
-  private async removeTokenFromUser(doc: firebase.firestore.DocumentSnapshot): Promise<void> {
+  private async removeTokenFromUser(snapShot: firebase.firestore.QuerySnapshot): Promise<void> {
     try {
-      await doc.ref.update({ token: '' });
+      await snapShot.docs[0].ref.update({ token: '' });
     }
     catch (e) {
       Promise.reject(e);

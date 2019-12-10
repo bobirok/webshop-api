@@ -10,7 +10,7 @@ router.post('/products', async (req, res) => {
     return await productHandler.createProduct(req, res);
 })
 
-router.get('/products', auth.authenticate , async (req, res) => {
+router.get('/products' , async (req, res) => {
     return await productHandler.getAllProducts(req, res);
 })
 
