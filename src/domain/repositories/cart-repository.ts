@@ -10,36 +10,21 @@ export class CartRepository {
     private productClient = new ProductDataClient()
 
     public async getCartProducts(username: string): Promise<Cart> {
-        try {
-            let userSnapshot = await this.userClient.getUser(username);
-            let products: Product[] = userSnapshot.docs[0].data().cart;
-            
-            let cart = new Cart(products);
+        let userSnapshot = await this.userClient.getUser(username);
+        let products: Product[] = userSnapshot.docs[0].data().cart;
 
-            return cart;
-        }
-        catch(e) {
-            return Promise.reject(e);
-        }
+        let cart = new Cart(products);
+
+        return cart;
     }
 
     public async addToUserCart(username: string, productId: string): Promise<void> {
-        try {
-            let product: Product = await this.productClient.getProduct(productId);
+        let product: Product = await this.productClient.getProduct(productId);
 
-            await this.cartClient.addProductToCart(username, product);
-        }
-        catch(e) {
-            Promise.reject(e);
-        }
+        await this.cartClient.addProductToCart(username, product);
     }
 
     public async removeProductFromCart(username: string, productId: string): Promise<void> {
-        try {
-            await this.cartClient.removeProductFromCart(username, productId);
-        }
-        catch(e) {
-            Promise.reject(e);
-        }
+        await this.cartClient.removeProductFromCart(username, productId);
     }
 }

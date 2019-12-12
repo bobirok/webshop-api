@@ -20,6 +20,7 @@ export class Cart {
         this.products.forEach((p: Product) => {
             total += +p.price;
         })
+        
         return total;
     }
 }

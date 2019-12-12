@@ -1,5 +1,4 @@
 import * as firebase from 'firebase';
-import firestore from 'firebase/firestore'
 import { Product } from '../domain/product';
 require('dotenv').config()
 
@@ -7,12 +6,7 @@ export class ProductDataClient {
     private database = require('./database');
 
     public async createProduct(product: any): Promise<void> {
-        try {
-            await this.database.collection('product').add({ ...product })
-        }
-        catch (e) {
-            Promise.reject(e);
-        }
+        await this.database.collection('product').add({ ...product })
     }
 
     public async getProducts(): Promise<any[]> {
@@ -23,9 +17,9 @@ export class ProductDataClient {
                 snapshot.forEach((doc) => {
                     arr.push(doc.data())
                 })
-                
-            return arr;
-        })
+
+                return arr;
+            })
     }
 
     public async getProduct(id: string): Promise<any> {
@@ -76,18 +70,19 @@ export class ProductDataClient {
     }
 
     private getProductForDeletion(productId: string): Promise<any> {
-        try {
-            return new Promise((resolve, reject) => {
-                this.database.collection('product').where('id', '==', productId)
+        return new Promise((resolve, reject) => {
+            this.database.collection('product').where('id', '==', productId)
                 .get()
                 .then((snapShot: firebase.firestore.QuerySnapshot) => {
+
+                    if (!snapShot.docs.length) {
+                        reject(new Error('Product does not exist!'))
+                    }
+
                     resolve(snapShot.docs[0])
                 })
-            })
-        }
-        catch (e) {
-            return Promise.reject(e)
-        }
+        })
+
     }
 
     private async removeFromStorage(foundProduct: firebase.firestore.QueryDocumentSnapshot): Promise<void> {

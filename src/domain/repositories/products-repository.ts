@@ -5,38 +5,18 @@ export class ProductsRepository {
     private productDataClient = new ProductDataClient()
 
     public async createProduct(product: Product): Promise<void> {
-        try {
-            await this.productDataClient.createProduct(product);
-        }
-        catch(e) {
-            Promise.reject(e);
-        }
+        await this.productDataClient.createProduct(product);
     }
 
     public async getProducts(): Promise<Product[]> {
-        try {
-            return await this.productDataClient.getProducts();
-        } 
-        catch(e) {
-            return Promise.reject(e)
-        }
+        return await this.productDataClient.getProducts();
     }
 
     public async getProduct(id: string): Promise<Product> {
-        try {
-            return await this.productDataClient.getProduct(id);
-        }
-        catch(e) {
-            return Promise.reject(e);
-        }
+        return await this.productDataClient.getProduct(id);
     }
 
     public async deleteProduct(id: string): Promise<void> {
-        try {
-            await this.productDataClient.deleteProduct(id);
-        }
-        catch(e) {
-            Promise.reject(e);
-        }
+        await this.productDataClient.deleteProduct(id);
     }
 }

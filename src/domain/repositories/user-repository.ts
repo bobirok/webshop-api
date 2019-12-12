@@ -10,41 +10,21 @@ export class UserRepository {
     private productClient = new ProductDataClient();
 
     public async registerUser(user: User, password: string): Promise<string> {
-        try {
-            return await this.userClient.registerUser(user, password);
-        }
-        catch(e) {
-            return Promise.reject(e)
-        }
+        return await this.userClient.registerUser(user, password);
     }
 
     public async loginUser(username: string, password: string): Promise<string> {
-        try {
-            return await this.userClient.loginUser(username, password);
-        }
-        catch(e) {
-            return Promise.reject(e);
-        }
+        return await this.userClient.loginUser(username, password);
     }
 
     public async logOutUser(token: string): Promise<void> {
-        try {
-            await this.userClient.logOut(token);
-        }
-        catch(e) {
-            Promise.reject(e)
-        }
+        await this.userClient.logOut(token);
     }
 
     public async getUser(username: string): Promise<User> {
-        try {
-            let userSnapshot = await this.userClient.getUser(username);
+        let userSnapshot = await this.userClient.getUser(username);
 
-            return this.buildUserProfile(userSnapshot);
-        }
-        catch(e) {
-            return Promise.reject(e);
-        }
+        return this.buildUserProfile(userSnapshot);
     }
 
     private buildUserProfile(snapshot: firestore.QuerySnapshot): User {

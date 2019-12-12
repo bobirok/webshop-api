@@ -1,6 +1,6 @@
+import * as uuid from 'uuid';
 import { ProductsRepository } from "../../domain/repositories/products-repository";
 import { Product } from "../../domain/product";
-import * as uuid from 'uuid';
 
 export class ProductHandler {
     private productRepository = new ProductsRepository();
@@ -32,7 +32,7 @@ export class ProductHandler {
             return res.status(200).send(products);
         }
         catch(e) {
-            return res.status(400).send();
+            return res.status(400).send(e.message);
         }
     }
 

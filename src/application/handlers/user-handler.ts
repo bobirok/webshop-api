@@ -1,27 +1,20 @@
-import { User } from "../../domain/user";
 import { UserRepository } from "../../domain/repositories/user-repository";
-import { Cart } from "../../domain/cart";
+import { UserFactory } from '../../domain/user-factory';
 
 export class UserHandler {
     private userRepository = new UserRepository();
 
     public async register(req: any, res: any): Promise<any> {
-        let firstName = req.query.firstname;
-        let lastName = req.query.lastname;
-        let username = req.query.username;
-        let age = req.query.age;
-        let createdAt = Date.now();
         let password = req.query.password;
-        let cart: Cart = new Cart();
 
-        let user = new User(firstName, lastName, username, parseInt(age), createdAt, false, cart);
-        console.log(user)
+        let user = UserFactory.createUser(req);
+
         try {
             let token = await this.userRepository.registerUser(user, password);
             return res.status(200).send(token);
         }
         catch (e) {
-            return res.status(400).send(e)
+            return res.status(400).send(e.message)
         }
     }
 
@@ -35,7 +28,7 @@ export class UserHandler {
             return res.status(200).send(token);
         }
         catch(e) {
-            return res.status(400).send(e)
+            return res.status(400).send(e.message)
         }
     }
 
@@ -48,7 +41,7 @@ export class UserHandler {
             return res.status(200).send('Loged Out');
         }
         catch (e) {
-            return res.status(400).send(e);
+            return res.status(400).send(e.message);
         }
     }
 
@@ -61,7 +54,7 @@ export class UserHandler {
             return res.status(200).send(user);
         }
         catch(e) {
-            return res.status(401).send(e)
+            return res.status(401).send(e.message)
         }
     }
 }

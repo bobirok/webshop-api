@@ -1,9 +1,8 @@
+const express = require('express');
 import { UserHandler } from '../handlers/user-handler'
 import { Authentication } from '../middleware/auth';
 
-const express = require('express');
 const router = express.Router();
-
 const userHandler = new UserHandler();
 const auth = Authentication;
 
