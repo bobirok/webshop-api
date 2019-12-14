@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
-import * as jwt from 'jsonwebtoken';
 import { User } from '../domain/user';
+import { JwtFactory } from './jwtFactory';
 
 const bcrypt = require('bcrypt');
 
@@ -11,16 +11,11 @@ export class UserDataClient {
   private database = require('./database');
 
   public async registerUser(user: User, password: string): Promise<string> {
-    try {
-      let snapShot = await this.database.collection('user').where('username', '==', user.username).get()
+    let snapShot = await this.database.collection('user').where('username', '==', user.username).get()
 
-      let token = await this.processRegistration(snapShot, user, password)
+    let token = await this.processRegistration(snapShot, user, password)
 
-      return token
-    }
-    catch (e) {
-      return Promise.reject(e)
-    }
+    return token
   }
 
   public async loginUser(username: string, password: string): Promise<string> {
@@ -64,17 +59,17 @@ export class UserDataClient {
   }
 
   private async processLogin(snapShot: firebase.firestore.QuerySnapshot, password: string): Promise<string> {
-      if (snapShot.size === 0) {
-        throw new Error('No registration with these credentials!')
-      }
+    if (snapShot.size === 0) {
+      throw new Error('No registration with these credentials!')
+    }
 
-      return new Promise((resolve, reject) => {
-        bcrypt.compare(password, snapShot.docs[0].data().password, async (err: Error, res: boolean) => {
-          if (!res) { reject('The credentials are invalid!') }
-          let token = await this.insertToken(res, snapShot.docs[0]);
-          resolve(token);
-        })
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, snapShot.docs[0].data().password, async (err: Error, res: boolean) => {
+        if (!res) { reject('The credentials are invalid!') }
+        let token = await this.insertToken(snapShot.docs[0]);
+        resolve(token);
       })
+    })
   }
 
   private saltPassword(password: string): Promise<string> {
@@ -86,38 +81,30 @@ export class UserDataClient {
   }
 
   private async processRegistration(snapShot: firebase.firestore.QuerySnapshot, user: User, password: string): Promise<string> {
-      if(snapShot.size !== 0) {
-        throw new Error('Account with this username exists!');
-      }
+    if (snapShot.size !== 0) {
+      throw new Error('Account with this username exists!');
+    }
 
-      let salted_password = await this.saltPassword(password);
-      await this.database.collection('user').add({ ...user, password: salted_password, cart: [...user.cart.products] });
-      let user_snapshot = await this.getUser(user.username);
-      let token = await this.assignTokenToUser(user_snapshot);
+    let salted_password = await this.saltPassword(password);
+    await this.database.collection('user').add({ ...user, password: salted_password, cart: [...user.cart.products] });
+    let user_snapshot = await this.getUser(user.username);
+    let token = await this.assignTokenToUser(user_snapshot);
 
-      return token;
+    return token;
   }
 
   private async assignTokenToUser(snapShot: firebase.firestore.QuerySnapshot): Promise<string> {
-    return await this.insertToken(true, (<firebase.firestore.QueryDocumentSnapshot>snapShot.docs[0])) 
+    return await this.insertToken((<firebase.firestore.QueryDocumentSnapshot>snapShot.docs[0]))
   }
 
-  private async insertToken(accountExists: boolean, doc: firebase.firestore.QueryDocumentSnapshot): Promise<string> {
-      if (!accountExists) {
-        throw new Error('No registration with these credentials');
-      }
+  private async insertToken(doc: firebase.firestore.QueryDocumentSnapshot): Promise<string> {
+    const token = JwtFactory.generateToken(doc.data());
+    await doc.ref.update({ token });
 
-      const token = this.generateJwtToken(doc.data());
-      await doc.ref.update({ token });
-
-      return token;
+    return token;
   }
 
   private async removeTokenFromUser(snapShot: firebase.firestore.QuerySnapshot): Promise<void> {
-      await snapShot.docs[0].ref.update({ token: '' });
-  }
-
-  private generateJwtToken(user: firebase.firestore.DocumentData): string {
-    return jwt.sign({ username: user.username, isAdmin: user.isAdmin }, process.env.JWT_SECRET_KEY!);
+    await snapShot.docs[0].ref.update({ token: '' });
   }
 }

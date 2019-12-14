@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import { JwtFactory } from '../../infrastructure/jwtFactory';
 require('dotenv').config();
 
 export class Authentication {
@@ -6,7 +6,7 @@ export class Authentication {
     public static async authenticate(request: any, response: any, next: any) {
         try {
             let token: string = request.header('Authorization').replace('Bearer ', '')
-            const decode: any = jwt.verify(token, process.env.JWT_SECRET_KEY!)
+            const decode: any = JwtFactory.verifyToken(token);
             
             if(!decode.username) {
                 throw new Error();
@@ -28,7 +28,7 @@ export class Authentication {
             }
 
             let token: string = request.header('Authorization').replace('Bearer ', '');
-            const decode: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+            const decode: any = JwtFactory.verifyToken(token);
 
             if(!decode.isAdmin) {
                 throw new Error('You do not have permissions!');

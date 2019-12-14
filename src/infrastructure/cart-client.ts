@@ -1,5 +1,3 @@
-import * as firebase from 'firebase';
-import firestore from 'firebase/firestore'
 import { UserDataClient } from './user-data-client';
 
 require('dotenv').config()
@@ -13,7 +11,7 @@ export class CartClient {
 
         cart.push(product);
 
-        await this.setCart(username, cart);
+        await this.updateCart(username, cart);
     }
 
     public async removeProductFromCart(username: string, productid: string): Promise<void> {
@@ -21,7 +19,7 @@ export class CartClient {
 
         cart = cart.filter(_ => _.id !== productid);
 
-        await this.setCart(username, cart)
+        await this.updateCart(username, cart)
     }
 
     private async getCart(username: string): Promise<any> {
@@ -30,7 +28,7 @@ export class CartClient {
         return userSnapshot.docs[0].data().cart;
     }
 
-    private async setCart(username: string, cart: any): Promise<void> {
+    private async updateCart(username: string, cart: any): Promise<void> {
         let userSnapshot = await this.userClient.getUser(username);
         let docId = userSnapshot.docs[0].id;
 
