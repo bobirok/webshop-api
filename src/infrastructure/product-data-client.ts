@@ -39,34 +39,24 @@ export class ProductDataClient {
     }
 
     public async deleteProduct(productId: string): Promise<void> {
-        try {
-            let foundProduct = await this.getProductForDeletion(productId);
+        let foundProduct = await this.getProductForDeletion(productId);
 
-            await this.removeFromStorage(foundProduct)
-        }
-        catch (e) {
-            throw new Error(e.message);
-        }
+        await this.removeFromStorage(foundProduct)
     }
 
     public updateProduct(product: Product, data: any): void {
-        try {
-            this.database.collection('product').where('slug', '==', product.slug)
-                .get()
-                .then((snapShot: firebase.firestore.QuerySnapshot) => {
-                    snapShot.forEach((doc) => {
-                        this.database.collection('product').doc(doc.id).set({
-                            name: data.name,
-                            slug: product.slug,
-                            dateAdded: product.dateAdded,
-                            quantity: product.quantity
-                        })
-                    })
+        this.database.collection('product').where('slug', '==', product.slug)
+            .get()
+            .then((snapShot: firebase.firestore.QuerySnapshot) => {
+                snapShot.forEach((doc) => {
+                    this.database.collection('product').doc(doc.id).set({
+                        name: data.name,
+                        slug: product.slug,
+                        dateAdded: product.dateAdded,
+                        quantity: product.quantity
                 })
-        }
-        catch (e) {
-            throw new Error(e.message)
-        }
+            })
+        })
     }
 
     private getProductForDeletion(productId: string): Promise<any> {

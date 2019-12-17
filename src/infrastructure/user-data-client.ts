@@ -19,43 +19,26 @@ export class UserDataClient {
   }
 
   public async loginUser(username: string, password: string): Promise<string> {
-    try {
-      let userSnapshot = await this.getUser(username);
+    let userSnapshot = await this.getUser(username);
 
-      let token = await this.processLogin(userSnapshot, password);
+    let token = await this.processLogin(userSnapshot, password);
 
-      return token;
-    }
-    catch (e) {
-      return Promise.reject(e)
-    }
+    return token;
   }
 
   public async logOut(username: string): Promise<void> {
-    try {
-      let userDocument: firebase.firestore.QuerySnapshot = await this.getUser(username);
+    let userDocument: firebase.firestore.QuerySnapshot = await this.getUser(username);
 
-      this.removeTokenFromUser(userDocument);
-
-      Promise.resolve();
-    }
-    catch (e) {
-      Promise.reject(e);
-    }
+    await this.removeTokenFromUser(userDocument);
   }
 
   public getUser(username: string): Promise<firebase.firestore.QuerySnapshot> {
-    try {
-      return new Promise((resolve, reject) => {
-        this.database.collection('user').where('username', '==', username).get()
-          .then((snapShot: firebase.firestore.QuerySnapshot) => {
-            resolve(snapShot)
-          })
-      })
-    }
-    catch (e) {
-      return Promise.reject(e)
-    }
+    return new Promise((resolve, reject) => {
+      this.database.collection('user').where('username', '==', username).get()
+        .then((snapShot: firebase.firestore.QuerySnapshot) => {
+          resolve(snapShot)
+        })
+    })
   }
 
   private async processLogin(snapShot: firebase.firestore.QuerySnapshot, password: string): Promise<string> {

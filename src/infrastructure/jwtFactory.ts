@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import * as jwt from 'jsonwebtoken'
 
-require('dotenv').configure();
+require('dotenv').config();
 
 export class JwtFactory {
 
