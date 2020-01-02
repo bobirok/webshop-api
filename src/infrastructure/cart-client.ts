@@ -1,9 +1,9 @@
-import { UserDataClient } from './user-data-client';
+import { UserClient } from './user-client';
 
 require('dotenv').config()
 
 export class CartClient {
-    private userClient = new UserDataClient();
+    private userClient = new UserClient();
     private database = require('./database')
 
     public async addProductToCart(username: string, product: any): Promise<void> {

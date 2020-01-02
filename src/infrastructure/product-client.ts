@@ -1,8 +1,7 @@
 import * as firebase from 'firebase';
-import { Product } from '../domain/product';
 require('dotenv').config()
 
-export class ProductDataClient {
+export class ProductClient {
     private database = require('./database');
 
     public async createProduct(product: any): Promise<void> {
@@ -44,19 +43,33 @@ export class ProductDataClient {
         await this.removeFromStorage(foundProduct)
     }
 
-    public updateProduct(product: Product, data: any): void {
-        this.database.collection('product').where('slug', '==', product.slug)
+    public async updateProduct(product: any): Promise<void> {
+        this.database.collection('product').where('id', '==', product.id)
             .get()
             .then((snapShot: firebase.firestore.QuerySnapshot) => {
                 snapShot.forEach((doc) => {
                     this.database.collection('product').doc(doc.id).set({
-                        name: data.name,
-                        slug: product.slug,
+                        name: product.name,
+                        id: product.id,
                         dateAdded: product.dateAdded,
-                        quantity: product.quantity
+                        quantity: product.quantity,
+                        price: product.price,
+                        image: product.image
                 })
             })
         })
+    }
+
+    public async reduceProductQuantity(productId: string): Promise<void> {
+        let product = await this.getProduct(productId);
+        product.quantity--;
+        await this.updateProduct(product);
+    }
+
+    public async increaseProductQuantity(productId: string): Promise<void> {
+        let product = await this.getProduct(productId);
+        product.quantity++;
+        await this.updateProduct(product);
     }
 
     private getProductForDeletion(productId: string): Promise<any> {
@@ -79,3 +92,6 @@ export class ProductDataClient {
         await foundProduct.ref.delete();
     }
 }
+
+let productClient = new ProductClient();
+productClient.reduceProductQuantity('aweqw21-aa').then(console.log)

@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 
 require('dotenv').config();
 
-export class UserDataClient {
+export class UserClient {
 
   private database = require('./database');
 

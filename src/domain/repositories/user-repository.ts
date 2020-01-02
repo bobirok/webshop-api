@@ -1,13 +1,10 @@
-import { UserDataClient } from "../../infrastructure/user-data-client";
+import { UserClient } from "../../infrastructure/user-client";
 import { User } from "../user";
 import { firestore } from "firebase";
-import { Product } from "../product";
-import { ProductDataClient } from "../../infrastructure/product-data-client";
 import { Cart } from "../cart";
 
 export class UserRepository {
-    private userClient = new UserDataClient();
-    private productClient = new ProductDataClient();
+    private userClient = new UserClient();
 
     public async registerUser(user: User, password: string): Promise<string> {
         return await this.userClient.registerUser(user, password);

@@ -1,8 +1,8 @@
-import { ProductDataClient } from "../../infrastructure/product-data-client";
+import { ProductClient } from "../../infrastructure/product-client";
 import { Product } from "../product";
 
 export class ProductsRepository {
-    private productDataClient = new ProductDataClient()
+    private productDataClient = new ProductClient()
 
     public async createProduct(product: Product): Promise<void> {
         await this.productDataClient.createProduct(product);
