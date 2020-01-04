@@ -19,6 +19,10 @@ export class CartRepository {
     }
 
     public async addToUserCart(username: string, productId: string): Promise<void> {
+        if(await this.isInUserCart(username, productId)) {
+            throw new Error('This item is already in cart!')
+        }
+
         let product: Product = await this.productClient.getProduct(productId);
         
         await this.cartClient.addProductToCart(username, product);
@@ -31,4 +35,11 @@ export class CartRepository {
 
         await this.productClient.increaseProductQuantity(productId);
     }
+
+    private async isInUserCart(username: string, productId: string): Promise<boolean> {
+        let cart = await this.getCartProducts(username);
+
+        return cart.products.some(_ => _.id === productId);
+    }
+
 }

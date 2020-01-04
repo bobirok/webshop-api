@@ -29,7 +29,7 @@ export class CartHandler {
             return res.status(200).send('Added to cart!')
         }
         catch(e) {
-            return res.status(400).send('Product can not be added!');
+            return res.status(400).send(e.message);
         }
     }
 
