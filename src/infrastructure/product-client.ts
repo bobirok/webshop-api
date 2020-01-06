@@ -92,6 +92,3 @@ export class ProductClient {
         await foundProduct.ref.delete();
     }
 }
-
-let productClient = new ProductClient();
-productClient.reduceProductQuantity('aweqw21-aa').then(console.log)

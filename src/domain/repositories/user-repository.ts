@@ -1,7 +1,6 @@
 import { UserClient } from "../../infrastructure/user-client";
 import { User } from "../user";
 import { firestore } from "firebase";
-import { Cart } from "../cart";
 
 export class UserRepository {
     private userClient = new UserClient();
@@ -26,14 +25,8 @@ export class UserRepository {
 
     private buildUserProfile(snapshot: firestore.QuerySnapshot): User {
         let data = snapshot.docs[0].data();
-        let username: string = data.username;
-        let firstName: string = data.firstName;
-        let lastName: string = data.lastName;
-        let age: number = data.age;
-        let dateCreated: number = data.profileCreatedAt;
-        let isAdmin: boolean = data.isAdmin;
-        let cart: Cart = data.cart;
+        let { username, firstName, lastName, age, profileCreatedAt, isAdmin, cart } = data;
 
-        return new User(firstName, lastName, username, age, dateCreated, isAdmin, cart)
+        return new User(firstName, lastName, username, age, profileCreatedAt, isAdmin, cart)
     }
 }

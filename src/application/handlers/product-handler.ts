@@ -7,12 +7,9 @@ export class ProductHandler {
 
     public async createProduct(req: any, res: any): Promise<any> {
         let id = uuid.v4();
-        let name = req.query.name;
-        let price = req.query.price;
-        let image = req.query.image;
-        let quantity = req.query.quantity;
         let date = Date.now();
-
+        let { name, price, image, quantity } = req.query;
+        
         try {
             let product = new Product(id, name, price, image, quantity, date);
 

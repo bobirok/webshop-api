@@ -19,8 +19,7 @@ export class UserHandler {
     }
 
     public async logIn(req: any, res: any): Promise<any> {
-        let username: string = req.query.username;
-        let password: string = req.query.password;
+        const { username, password } = req.query;
     
         try {
             let token = await this.userRepository.loginUser(username, password);
@@ -33,7 +32,7 @@ export class UserHandler {
     }
 
     public async logOut(req: any, res: any): Promise<any> {
-        let username = req.username;
+        let username: string = req.username;
 
         try {
             await this.userRepository.logOutUser(username);

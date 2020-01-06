@@ -26,7 +26,7 @@ export class CartHandler {
         try {
             await this.cartRepository.addToUserCart(username, productId);
 
-            return res.status(200).send('Added to cart!')
+            return res.status(200).send('Added to cart!');
         }
         catch(e) {
             return res.status(400).send(e.message);
@@ -43,7 +43,7 @@ export class CartHandler {
             return res.status(200).send('Item has been removed!');
         }
         catch(e) {
-            return res.status(400).send(e)
+            return res.status(400).send(e);
         }
     }
 }

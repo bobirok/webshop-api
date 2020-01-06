@@ -13,9 +13,7 @@ export class CartRepository {
         let userSnapshot = await this.userClient.getUser(username);
         let products: Product[] = userSnapshot.docs[0].data().cart;
 
-        let cart = new Cart(products);
-
-        return cart;
+        return new Cart(products);
     }
 
     public async addToUserCart(username: string, productId: string): Promise<void> {
@@ -41,5 +39,4 @@ export class CartRepository {
 
         return cart.products.some(_ => _.id === productId);
     }
-
 }
