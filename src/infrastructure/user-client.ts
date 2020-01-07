@@ -32,13 +32,13 @@ export class UserClient {
     await this.removeTokenFromUser(userDocument);
   }
 
-  public getUser(username: string): Promise<firebase.firestore.QuerySnapshot> {
-    return new Promise((resolve, reject) => {
-      this.database.collection('user').where('username', '==', username).get()
-        .then((snapShot: firebase.firestore.QuerySnapshot) => {
-          resolve(snapShot)
-        })
-    })
+  public async getUser(username: string): Promise<firebase.firestore.QuerySnapshot> {
+    return await this.database.collection('user').where('username', '==', username).get();
+  }
+
+  public async deleteUser(username: string): Promise<void> {
+    const user = await this.getUser(username);
+    await user.docs[0].ref.delete();
   }
 
   private async processLogin(snapShot: firebase.firestore.QuerySnapshot, password: string): Promise<string> {

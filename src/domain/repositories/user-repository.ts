@@ -23,6 +23,10 @@ export class UserRepository {
         return this.buildUserProfile(userSnapshot);
     }
 
+    public async deleteUser(username: string): Promise<void> {
+        await this.userClient.deleteUser(username);
+    }
+
     private buildUserProfile(snapshot: firestore.QuerySnapshot): User {
         let data = snapshot.docs[0].data();
         let { username, firstName, lastName, age, profileCreatedAt, isAdmin, cart } = data;
